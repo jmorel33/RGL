@@ -1212,8 +1212,10 @@ static const char* RGL_VERTEX_SHADER =
     "out vec3 vLightColor;\n"
 
     // -- Standard Uniforms --
-    "uniform mat4 view;\n"
-    "uniform mat4 projection;\n"
+    "layout (std140, binding = 1) uniform ViewData {\n"
+    "    mat4 view;\n"
+    "    mat4 projection;\n"
+    "};\n"
     "uniform vec3 u_camera_pos;\n"
 
     // -- Global Lighting Uniforms --
@@ -1328,8 +1330,10 @@ static const char* RGL_SHADOW_VERTEX_SHADER =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec2 aTexCoord;\n"
-    "uniform mat4 view;\n"
-    "uniform mat4 projection;\n"
+    "layout (std140, binding = 1) uniform ViewData {\n"
+    "    mat4 view;\n"
+    "    mat4 projection;\n"
+    "};\n"
     "out vec2 vTexCoord;\n"
     "void main() {\n"
     "    gl_Position = projection * view * vec4(aPos, 1.0);\n"
@@ -1355,8 +1359,10 @@ static const char* RGL_SHADOW_VOLUME_VERTEX_SHADER_ROBUST =
     "#version 330 core\n"
     "layout (location = 0) in vec4 aPos; // Use vec4: .xyz = position, .w = 0 for normal, 1 for extruded\n"
     
-    "uniform mat4 view;\n"
-    "uniform mat4 projection;\n"
+    "layout (std140, binding = 1) uniform ViewData {\n"
+    "    mat4 view;\n"
+    "    mat4 projection;\n"
+    "};\n"
     "uniform vec3 u_light_pos;\n"
 
     "void main()\n"
@@ -1746,8 +1752,6 @@ static void _RGL_FlushBatch(void) {
 
     // --- 3. Setup OpenGL State & Common Uniforms ---
     glUseProgram(RGL.main_shader.gl_program_id);
-    glUniformMatrix4fv(RGL.loc_view, 1, GL_FALSE, (const GLfloat*)RGL.current_view_matrix);
-    glUniformMatrix4fv(RGL.loc_projection, 1, GL_FALSE, (const GLfloat*)RGL.current_projection_matrix);
     glUniform1i(RGL.loc_texture_sampler, 0);
 
     // --- NEW: Set Lighting Uniforms (from the patch) ---
@@ -1980,8 +1984,9 @@ SITAPI bool RGL_Init(void) {
     RGL.main_shader = SituationLoadShaderFromMemory(RGL_VERTEX_SHADER, RGL_FRAGMENT_SHADER);
     if (RGL.main_shader.gl_program_id == 0) return false;
 
-    RGL.loc_view = SituationGetShaderLocation(RGL.main_shader, "view");
-    RGL.loc_projection = SituationGetShaderLocation(RGL.main_shader, "projection");
+    // Bind the UBO for camera data to the global binding point 1
+    GLuint view_block_index = glGetUniformBlockIndex(RGL.main_shader.gl_program_id, "ViewData");
+    glUniformBlockBinding(RGL.main_shader.gl_program_id, view_block_index, 1);
     RGL.loc_texture_sampler = SituationGetShaderLocation(RGL.main_shader, "textureSampler");
     RGL.loc_use_texture = SituationGetShaderLocation(RGL.main_shader, "useTexture");
     RGL.loc_camera_pos = SituationGetShaderLocation(RGL.main_shader, "u_camera_pos");
