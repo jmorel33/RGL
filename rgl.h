@@ -502,8 +502,8 @@ SITAPI void RGL_ResetTransform(void);                                       // R
 //==================================================================================
 // Camera & View Module
 //==================================================================================
-SITAPI void RGL_SetCamera2D(vec2 target, float rotation_degrees, float zoom); // Configures an orthographic camera for 2D rendering.
-SITAPI void RGL_SetCamera3D(vec3 position, vec3 target, vec3 up, float fov_y_degrees); // Configures a perspective camera for 3D rendering.
+SITAPI void RGL_SetCamera2D(Vector2 target, float rotation_degrees, float zoom); // Configures an orthographic camera for 2D rendering.
+SITAPI void RGL_SetCamera3D(Vector3 position, Vector3 target, Vector3 up, float fov_y_degrees); // Configures a perspective camera for 3D rendering.
 SITAPI void RGL_PushMatrix(void);                                           // Pushes the current camera matrices onto a stack, saving the current view.
 SITAPI void RGL_PopMatrix(void);                                            // Pops the last saved camera matrices from the stack, restoring the view.
 SITAPI void RGL_GetViewMatrix(mat4 out_view);                               // Gets a copy of the current view matrix.
@@ -527,7 +527,7 @@ SITAPI bool RGL_SetPathLooping(const char* path_name, float z_pos);         // C
 SITAPI bool RGL_DestroyPathByName(const char* path_name);                   // Destroys a named path and frees its memory.
 SITAPI void RGL_DrawPath(float player_z, int draw_distance);                // Draws the active path using its currently assigned custom style.
 SITAPI void RGL_DrawPathAsRoad(float player_z, int draw_distance);          // Convenience wrapper to draw the active path as a classic road.
-SITAPI void RGL_DrawPathAsMap(RGLTexture target, vec2 center_pos_xz, float world_width, Color bg_color); // Renders a top-down 2D map of the active path to a texture.
+SITAPI void RGL_DrawPathAsMap(RGLTexture target, Vector2 center_pos_xz, float world_width, Color bg_color); // Renders a top-down 2D map of the active path to a texture.
 SITAPI const RGLPathStyle* RGL_GetDefaultRoadStyle(void);                   // Gets a pointer to the built-in road style, for use with RGL_SetPathStyle.
 //==================================================================================
 // World Systems: Level Management
@@ -540,7 +540,7 @@ SITAPI bool RGL_AddThing(const char* level_name, RGLThing thing);           // A
 SITAPI bool RGL_SetActiveLevel(const char* level_name);                     // Sets the currently active level for drawing.
 SITAPI bool RGL_DestroyLevelByName(const char* level_name);                 // Destroys a named level and frees all its associated geometry data.
 SITAPI void RGL_DrawLevel(void);                                            // Draws the active level, including walls, flats, and things, with dynamic lighting.
-SITAPI bool RGL_PlaceLevelOnPath(const char* level_name, const char* path_name, float path_z, vec3 offset, float yaw_offset_degrees); // Positions a level relative to a point on a path.
+SITAPI bool RGL_PlaceLevelOnPath(const char* level_name, const char* path_name, float path_z, Vector3 offset, float yaw_offset_degrees); // Positions a level relative to a point on a path.
 SITAPI void RGL_DrawWorld(float camera_z, int Path_draw_distance);          // High-level helper to draw both the active path and all loaded levels.
 //==================================================================================
 // World Systems: Queries & Scenery
@@ -548,14 +548,14 @@ SITAPI void RGL_DrawWorld(float camera_z, int Path_draw_distance);          // H
 SITAPI void RGL_RegisterSceneryStyle(RGLSceneryType type, const RGLSceneryStyle* style); // Registers a custom drawing function for a type of scenery.
 SITAPI void RGL_UpdatePathScenery(float player_z, float view_distance);     // Updates dynamic scenery state, such as creating lights from scenery definitions.
 SITAPI bool RGL_GetPathPropertiesAt(float z_pos, RGLPathPoint* out_point);  // Gets the interpolated geometry and properties of the active path at a Z-position.
-SITAPI bool RGL_GetGroundAt(vec2 world_xz, RGLGroundInfo* out_info);        // Finds the ground surface (Y-position and normal) at a world XZ coordinate.
+SITAPI bool RGL_GetGroundAt(Vector2 world_xz, RGLGroundInfo* out_info);        // Finds the ground surface (Y-position and normal) at a world XZ coordinate.
 SITAPI bool RGL_QueryJunction(float player_z, float search_radius, RGLJunctionInfo* out_info); // Queries the active path for a junction trigger and returns its connection info.
 SITAPI bool RGL_GetDistanceToMarker(float player_z, const char* marker_name, float* out_distance); // Finds the distance to the next event marker with a specific name.
 SITAPI int RGL_FindMarkersInRange(float start_z, float end_z, RGLMarkerInfo out_markers[], int max_markers); // Finds all event markers within a Z-range.
 SITAPI int RGL_FindSceneryInRange(float start_z, float end_z, RGLScenery* out_scenery[], int max_scenery); // Finds all scenery objects within a Z-range.
-SITAPI int RGL_FindSceneryInRadius(vec3 world_pos, float radius, RGLScenery* out_objects[], int max_objects); // Finds all scenery objects within a 3D radius.
-SITAPI Vector3 RGL_LevelToWorld(const char* level_name, vec3 local_pos);       // Converts a 3D coordinate from a level's local space to global world space.
-SITAPI Vector3 RGL_WorldToLevel(const char* level_name, vec3 world_pos);       // Converts a 3D coordinate from global world space to a level's local space.
+SITAPI int RGL_FindSceneryInRadius(Vector3 world_pos, float radius, RGLScenery* out_objects[], int max_objects); // Finds all scenery objects within a 3D radius.
+SITAPI Vector3 RGL_LevelToWorld(const char* level_name, Vector3 local_pos);       // Converts a 3D coordinate from a level's local space to global world space.
+SITAPI Vector3 RGL_WorldToLevel(const char* level_name, Vector3 world_pos);       // Converts a 3D coordinate from global world space to a level's local space.
 //==================================================================================
 // Mesh & Resource Management
 //==================================================================================
@@ -587,14 +587,14 @@ SITAPI RGLMesh RGL_GenMeshRock(float radius, int subdivisions, int seed);   // G
 // Dynamic Lighting
 //==================================================================================
 SITAPI void RGL_SetAmbientLight(Color color);                               // Sets the global ambient light color for the entire scene.
-SITAPI int RGL_CreatePointLight(vec3 position, Color color, float radius, float intensity); // Creates a new point light that radiates in all directions.
-SITAPI int RGL_CreateDirectionalLight(vec3 direction, Color color, float intensity); // Creates a new directional light (e.g., sun) that affects the whole scene.
-SITAPI int RGL_CreateSpotLight(vec3 position, vec3 direction, Color color, float radius, float intensity, float outer_angle_deg, float inner_angle_deg); // Creates a new cone-shaped spot light.
-SITAPI int RGL_CreatePointLightYPQ(vec3 position, ColorYPQA ypq_color, float radius, float intensity); // Creates a point light using a YPQ color, for retro aesthetics.
+SITAPI int RGL_CreatePointLight(Vector3 position, Color color, float radius, float intensity); // Creates a new point light that radiates in all directions.
+SITAPI int RGL_CreateDirectionalLight(Vector3 direction, Color color, float intensity); // Creates a new directional light (e.g., sun) that affects the whole scene.
+SITAPI int RGL_CreateSpotLight(Vector3 position, Vector3 direction, Color color, float radius, float intensity, float outer_angle_deg, float inner_angle_deg); // Creates a new cone-shaped spot light.
+SITAPI int RGL_CreatePointLightYPQ(Vector3 position, ColorYPQA ypq_color, float radius, float intensity); // Creates a point light using a YPQ color, for retro aesthetics.
 SITAPI void RGL_SetLightActive(int light_id, bool active);                  // Activates or deactivates a light.
-SITAPI void RGL_SetLightPosition(int light_id, vec3 position);              // Updates the world position of a point or spot light.
-SITAPI void RGL_SetLightDirection(int light_id, vec3 direction);            // Updates the direction of a directional or spot light.
-SITAPI void RGL_SetLightDirectionFromYPR(int light_id, vec3 ypr_degrees);   // Updates a light's direction using Yaw, Pitch, and Roll angles.
+SITAPI void RGL_SetLightPosition(int light_id, Vector3 position);              // Updates the world position of a point or spot light.
+SITAPI void RGL_SetLightDirection(int light_id, Vector3 direction);            // Updates the direction of a directional or spot light.
+SITAPI void RGL_SetLightDirectionFromYPR(int light_id, Vector3 ypr_degrees);   // Updates a light's direction using Yaw, Pitch, and Roll angles.
 SITAPI void RGL_SetLightColor(int light_id, Color color);                   // Updates the color of a light.
 SITAPI void RGL_SetLightIntensity(int light_id, float intensity);           // Updates the intensity (brightness) of a light.
 SITAPI void RGL_AnimateLight(int light_id, float time, float frequency, float amplitude); // Applies a simple sinusoidal flicker to a light's intensity.
@@ -603,45 +603,45 @@ SITAPI void RGL_DestroyLight(int light_id);                                 // D
 // Shadow Rendering
 //==================================================================================
 SITAPI void RGL_CastStencilShadowFromMesh(RGLMesh mesh, mat4 transform, const RGLShadowConfig* config); // Casts a high-quality, perspective-correct stencil shadow from a mesh.
-SITAPI void RGL_DrawSpriteWithShadow(RGLSprite sprite, vec3 world_pos, vec2 size, const RGLShadowConfig* config); // Convenience wrapper to cast a stencil shadow from a billboard sprite.
-SITAPI void RGL_DrawSpriteWithSimpleShadow(RGLSprite sprite, vec3 world_pos, vec2 size, int light_id); // Simplified helper to cast a default stencil shadow from a light.
-SITAPI void RGL_DrawSpriteDownwardShadow(RGLSprite sprite, vec3 world_pos, vec2 size, Color shadow_tint); // Draws a fast, simple "blob" shadow projected vertically onto the ground.
+SITAPI void RGL_DrawSpriteWithShadow(RGLSprite sprite, Vector3 world_pos, Vector2 size, const RGLShadowConfig* config); // Convenience wrapper to cast a stencil shadow from a billboard sprite.
+SITAPI void RGL_DrawSpriteWithSimpleShadow(RGLSprite sprite, Vector3 world_pos, Vector2 size, int light_id); // Simplified helper to cast a default stencil shadow from a light.
+SITAPI void RGL_DrawSpriteDownwardShadow(RGLSprite sprite, Vector3 world_pos, Vector2 size, Color shadow_tint); // Draws a fast, simple "blob" shadow projected vertically onto the ground.
 //==================================================================================
 // 2D & 3D Primitive Drawing
 //==================================================================================
 // --- 2D Primitives ---
-SITAPI void RGL_DrawPixel(vec2 position, Color color);                      // Draws a single pixel at a 2D coordinate.
-SITAPI void RGL_DrawLine(vec2 start, vec2 end, Color color);                // Draws a 1-pixel-thick line between two points.
-SITAPI void RGL_DrawLineEx(vec2 start_pos, vec2 end_pos, float thick, Color color); // Draws a line with a specified thickness.
-SITAPI void RGL_DrawLineBezier(vec2 start, vec2 end, vec2 control1, vec2 control2, float thickness, Color color); // Draws a smooth, cubic Bezier curve.
-SITAPI void RGL_DrawPolyline(vec2* points, int point_count, float thickness, Color color, bool closed); // Draws a series of connected lines.
-SITAPI void RGL_DrawSitRectangle(SitRectangle rect, float roll_degrees, Color color); // Draws a color-filled rectangle with optional rotation.
-SITAPI void RGL_DrawSitRectangleOutline(SitRectangle rect, float thickness, Color color); // Draws the outline of a rectangle.
-SITAPI void RGL_DrawSitRectangleRounded(SitRectangle rect, float roundness, Color color); // Draws a color-filled rectangle with rounded corners.
-SITAPI void RGL_DrawSitRectangleRoundedOutline(SitRectangle rect, float roundness, float thickness, Color color); // Draws the outline of a rectangle with rounded corners.
-SITAPI void RGL_DrawSitRectangleGradient(SitRectangle rect, Color top_left, Color top_right, Color bottom_left, Color bottom_right); // Draws a rectangle with a smooth, per-vertex color gradient.
-SITAPI void RGL_DrawCircle(vec2 center, float radius, Color color);         // Draws a color-filled circle.
-SITAPI void RGL_DrawCircleOutline(vec2 center, float radius, float thickness, Color color); // Draws the outline of a circle.
-SITAPI void RGL_DrawEllipse(vec2 center, vec2 radii, Color color);          // Draws a color-filled ellipse.
-SITAPI void RGL_DrawRing(vec2 center, float inner_radius, float outer_radius, Color color); // Draws a color-filled ring (donut shape).
-SITAPI void RGL_DrawArc(vec2 center, float radius, float start_angle, float end_angle, Color color); // Draws a color-filled arc or pie-slice shape.
-SITAPI void RGL_DrawPolygon(vec2* points, int point_count, float z_depth, Color color); // Draws a filled, convex polygon on a specific Z-plane in world space.
-SITAPI void RGL_DrawPolygonScreen(vec2* points, int point_count, Color color); // Draws a filled, convex polygon in screen space for UI.
-SITAPI void RGL_DrawCircleYPQ(vec2 center, float radius, ColorYPQA color);  // CRT-specific color
-SITAPI void RGL_DrawSitRectangleYPQ(SitRectangle rect, ColorYPQA color);          // CRT-specific color
+SITAPI void RGL_DrawPixel(Vector2 position, Color color);                      // Draws a single pixel at a 2D coordinate.
+SITAPI void RGL_DrawLine(Vector2 start, Vector2 end, Color color);                // Draws a 1-pixel-thick line between two points.
+SITAPI void RGL_DrawLineEx(Vector2 start_pos, Vector2 end_pos, float thick, Color color); // Draws a line with a specified thickness.
+SITAPI void RGL_DrawLineBezier(Vector2 start, Vector2 end, Vector2 control1, Vector2 control2, float thickness, Color color); // Draws a smooth, cubic Bezier curve.
+SITAPI void RGL_DrawPolyline(Vector2* points, int point_count, float thickness, Color color, bool closed); // Draws a series of connected lines.
+SITAPI void RGL_DrawRectangle(SitRectangle rect, float roll_degrees, Color color); // Draws a color-filled rectangle with optional rotation.
+SITAPI void RGL_DrawRectangleOutline(SitRectangle rect, float thickness, Color color); // Draws the outline of a rectangle.
+SITAPI void RGL_DrawRectangleRounded(SitRectangle rect, float roundness, Color color); // Draws a color-filled rectangle with rounded corners.
+SITAPI void RGL_DrawRectangleRoundedOutline(SitRectangle rect, float roundness, float thickness, Color color); // Draws the outline of a rectangle with rounded corners.
+SITAPI void RGL_DrawRectangleGradient(SitRectangle rect, Color top_left, Color top_right, Color bottom_left, Color bottom_right); // Draws a rectangle with a smooth, per-vertex color gradient.
+SITAPI void RGL_DrawCircle(Vector2 center, float radius, Color color);         // Draws a color-filled circle.
+SITAPI void RGL_DrawCircleOutline(Vector2 center, float radius, float thickness, Color color); // Draws the outline of a circle.
+SITAPI void RGL_DrawEllipse(Vector2 center, Vector2 radii, Color color);          // Draws a color-filled ellipse.
+SITAPI void RGL_DrawRing(Vector2 center, float inner_radius, float outer_radius, Color color); // Draws a color-filled ring (donut shape).
+SITAPI void RGL_DrawArc(Vector2 center, float radius, float start_angle, float end_angle, Color color); // Draws a color-filled arc or pie-slice shape.
+SITAPI void RGL_DrawPolygon(Vector2* points, int point_count, float z_depth, Color color); // Draws a filled, convex polygon on a specific Z-plane in world space.
+SITAPI void RGL_DrawPolygonScreen(Vector2* points, int point_count, Color color); // Draws a filled, convex polygon in screen space for UI.
+SITAPI void RGL_DrawCircleYPQ(Vector2 center, float radius, ColorYPQA color);  // CRT-specific color
+SITAPI void RGL_DrawRectangleYPQ(SitRectangle rect, ColorYPQA color);          // CRT-specific color
 // 3D Primitive & Sprite Drawing
-SITAPI void RGL_DrawTriangle3D(vec3 p1, vec3 p2, vec3 p3, vec3 normal, vec2 uv1, vec2 uv2, vec2 uv3, RGLSprite sprite, Color tint, float base_light); // Draws a single lit, textured 3D triangle with explicit UVs.
-SITAPI void RGL_DrawQuad3D(vec3 p1, vec3 p2, vec3 p3, vec3 p4, vec3 normal, RGLSprite sprite, Color tint, float base_light); // Draws a single lit, textured 3D quad defined by four corner points.
-SITAPI void RGL_DrawCube(vec3 position, float size, RGLMaterial material);  // Draws a solid-colored, dynamically lit 3D cube.
-SITAPI void RGL_DrawLine3D(vec3 start, vec3 end, float thickness, Color color); // Draws a 3D line with specified thickness.
-SITAPI void RGL_DrawSprite(RGLSprite sprite, vec2 position, float roll_degrees, float scale, Color tint); // Draws a simple 2D sprite with rotation and scaling.
-SITAPI void RGL_DrawTexturePro(RGLSprite sprite, SitRectangle dest_rect, vec2 origin, float rotation_degrees, Color tint); // Draws a textured quad with transformation options.
-SITAPI void RGL_DrawSpritePro(RGLSprite sprite, vec3 position, vec2 size, vec2 origin_pct, vec3 rotation_eul_deg, vec2 skew, Color colors[4], float light_levels[4]); // The ultimate low-level sprite/quad drawing function with full options.
-SITAPI void RGL_DrawBillboard(RGLSprite sprite, vec3 world_pos, vec2 size, Color tint); // Draws a sprite in 3D that always faces the camera (spherical).
-SITAPI void RGL_DrawBillboardCylindricalY(RGLSprite sprite, vec3 world_pos, vec2 size, Color tint); // Draws a sprite in 3D that only pivots on the Y-axis to face the camera.
+SITAPI void RGL_DrawTriangle3D(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 normal, Vector2 uv1, Vector2 uv2, Vector2 uv3, RGLSprite sprite, Color tint, float base_light); // Draws a single lit, textured 3D triangle with explicit UVs.
+SITAPI void RGL_DrawQuad3D(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 normal, RGLSprite sprite, Color tint, float base_light); // Draws a single lit, textured 3D quad defined by four corner points.
+SITAPI void RGL_DrawCube(Vector3 position, float size, RGLMaterial material);  // Draws a solid-colored, dynamically lit 3D cube.
+SITAPI void RGL_DrawLine3D(Vector3 start, Vector3 end, float thickness, Color color); // Draws a 3D line with specified thickness.
+SITAPI void RGL_DrawSprite(RGLSprite sprite, Vector2 position, float roll_degrees, float scale, Color tint); // Draws a simple 2D sprite with rotation and scaling.
+SITAPI void RGL_DrawTexturePro(RGLSprite sprite, SitRectangle dest_rect, Vector2 origin, float rotation_degrees, Color tint); // Draws a textured quad with transformation options.
+SITAPI void RGL_DrawSpritePro(RGLSprite sprite, Vector3 position, Vector2 size, Vector2 origin_pct, Vector3 rotation_eul_deg, Vector2 skew, Color colors[4], float light_levels[4]); // The ultimate low-level sprite/quad drawing function with full options.
+SITAPI void RGL_DrawBillboard(RGLSprite sprite, Vector3 world_pos, Vector2 size, Color tint); // Draws a sprite in 3D that always faces the camera (spherical).
+SITAPI void RGL_DrawBillboardCylindricalY(RGLSprite sprite, Vector3 world_pos, Vector2 size, Color tint); // Draws a sprite in 3D that only pivots on the Y-axis to face the camera.
 SITAPI void RGL_DrawPanoramaBackground(RGLTexture texture, float scroll_offset_x, float y_offset_pct, float height_scale, Color tint); // Draws a horizontally-scrolling panoramic background.
-SITAPI void RGL_DrawQuadPro(RGLTexture texture, SitRectangle source_rect, vec3 position, vec2 size, vec2 origin_pct, vec3 rotation_eul_deg, vec2 skew, Color colors[4], float light_levels[4]); // DEPRECATED - Use DrawSpritePro.
-SITAPI void RGL_DrawQuad(RGLTexture texture, SitRectangle source_rect, vec3 position, vec2 size, Color tint); // DEPRECATED - Use DrawTexturePro or DrawSpritePro.
+SITAPI void RGL_DrawQuadPro(RGLTexture texture, SitRectangle source_rect, Vector3 position, Vector2 size, Vector2 origin_pct, Vector3 rotation_eul_deg, Vector2 skew, Color colors[4], float light_levels[4]); // DEPRECATED - Use DrawSpritePro.
+SITAPI void RGL_DrawQuad(RGLTexture texture, SitRectangle source_rect, Vector3 position, Vector2 size, Color tint); // DEPRECATED - Use DrawTexturePro or DrawSpritePro.
 //==================================================================================
 // Particle System
 //==================================================================================
@@ -669,17 +669,17 @@ SITAPI RGLBitmapFont RGL_CreateASCIIFont(const unsigned char* font_data, int cha
 // --- Font Rendering ---
 SITAPI RGLTexture RGL_StampTextToTextureAdvanced(const char* text, RGLTrueTypeFont font, Color text_color, Color bg_color, float wrap_width, int* out_width, int* out_height); // Renders TTF text to a texture with word wrapping.
 SITAPI RGLTexture RGL_StampTextToTexture(const char* text, RGLBitmapFont font, Color text_color, Color bg_color, int* out_width, int* out_height); // Renders text to a new texture.
-SITAPI void RGL_DrawTextEx(const char* text, vec2 position, RGLBitmapFont font, float spacing, Color color); // Draws bitmap text with custom character spacing.
-SITAPI void RGL_DrawText(const char* text, vec2 position, RGLBitmapFont font, Color color); // Draws text using a bitmap font.
-SITAPI void RGL_DrawTextTTF(const char* text, vec2 position, RGLTrueTypeFont font, Color color); // Draws text using a high-quality baked TrueType font.
+SITAPI void RGL_DrawTextEx(const char* text, Vector2 position, RGLBitmapFont font, float spacing, Color color); // Draws bitmap text with custom character spacing.
+SITAPI void RGL_DrawText(const char* text, Vector2 position, RGLBitmapFont font, Color color); // Draws text using a bitmap font.
+SITAPI void RGL_DrawTextTTF(const char* text, Vector2 position, RGLTrueTypeFont font, Color color); // Draws text using a high-quality baked TrueType font.
 SITAPI void RGL_DrawTextBoxed(const char* text, SitRectangle bounds, RGLBitmapFont font, Color color, bool word_wrap); // Draws text within a rectangle, with optional word wrapping.
 SITAPI void RGL_UnloadBitmapFont(RGLBitmapFont font);                       // Unloads a bitmap font's texture atlas.
 SITAPI void RGL_UnloadTrueTypeFont(RGLTrueTypeFont font);                   // Unloads a TrueType font's texture atlas.
 // --- Font Effects ---
-SITAPI void RGL_DrawTextWithShadow(const char* text, vec2 position, RGLBitmapFont font, Color text_color, Color shadow_color, vec2 shadow_offset); // Draws text with a drop shadow.
-SITAPI void RGL_DrawTextWithOutline(const char* text, vec2 position, RGLBitmapFont font, Color text_color, Color outline_color, float outline_thickness); // Draws text with an outline.
-SITAPI void RGL_DrawTextGradient(const char* text, vec2 position, RGLBitmapFont font, Color top_color, Color bottom_color); // Draws text with a vertical color gradient.
-SITAPI void RGL_DrawTextWave(const char* text, vec2 position, RGLBitmapFont font, Color color, float wave_amplitude, float wave_frequency, float time); // Draws text with a sinusoidal wave effect.
+SITAPI void RGL_DrawTextWithShadow(const char* text, Vector2 position, RGLBitmapFont font, Color text_color, Color shadow_color, Vector2 shadow_offset); // Draws text with a drop shadow.
+SITAPI void RGL_DrawTextWithOutline(const char* text, Vector2 position, RGLBitmapFont font, Color text_color, Color outline_color, float outline_thickness); // Draws text with an outline.
+SITAPI void RGL_DrawTextGradient(const char* text, Vector2 position, RGLBitmapFont font, Color top_color, Color bottom_color); // Draws text with a vertical color gradient.
+SITAPI void RGL_DrawTextWave(const char* text, Vector2 position, RGLBitmapFont font, Color color, float wave_amplitude, float wave_frequency, float time); // Draws text with a sinusoidal wave effect.
 // --- Font Utilities ---
 SITAPI Vector2 RGL_MeasureText(const char* text, RGLBitmapFont font);       // Measures the pixel dimensions of a string for a bitmap font.
 SITAPI Vector2 RGL_MeasureTextTTF(const char* text, RGLTrueTypeFont font);  // Measures the pixel dimensions of a string for a TrueType font.
@@ -692,11 +692,11 @@ SITAPI float RGL_Lerp(float a, float b, float t);                           // L
 SITAPI float RGL_Clamp(float value, float min, float max);                  // Clamps a float value between a minimum and a maximum.
 SITAPI float RGL_Normalize(float value, float start, float end);            // Normalizes a value from a given range to the [0, 1] range.
 SITAPI float RGL_Remap(float value, float input_start, float input_end, float output_start, float output_end); // Remaps a value from one range to another.
-SITAPI Vector2 RGL_Vector2Lerp(vec2 a, vec2 b, float t);                       // Linearly interpolates between two 2D vectors.
-SITAPI Vector2 RGL_Vector2Rotate(vec2 v, float angle_degrees);                 // Rotates a 2D vector by a given angle in degrees.
-SITAPI float RGL_Vector2Angle(vec2 v);                                      // Calculates the angle of a 2D vector in degrees.
-SITAPI bool RGL_IsPointInSitRectangle(vec2 point, SitRectangle rect);             // Checks if a 2D point is inside a rectangle.
-SITAPI bool RGL_IsPointInCircle(vec2 point, vec2 center, float radius);     // Checks if a 2D point is inside a circle.
+SITAPI Vector2 RGL_Vector2Lerp(Vector2 a, Vector2 b, float t);                       // Linearly interpolates between two 2D vectors.
+SITAPI Vector2 RGL_Vector2Rotate(Vector2 v, float angle_degrees);                 // Rotates a 2D vector by a given angle in degrees.
+SITAPI float RGL_Vector2Angle(Vector2 v);                                      // Calculates the angle of a 2D vector in degrees.
+SITAPI bool RGL_IsPointInSitRectangle(Vector2 point, SitRectangle rect);             // Checks if a 2D point is inside a rectangle.
+SITAPI bool RGL_IsPointInCircle(Vector2 point, Vector2 center, float radius);     // Checks if a 2D point is inside a circle.
 // --- RGB Color ---
 SITAPI Color RGL_ColorFromHSV(float hue, float saturation, float value);    // Creates a Color from Hue, Saturation, and Value components.
 SITAPI Color RGL_ColorFromHex(unsigned int hex_value);                      // Creates a Color from a 24-bit or 32-bit hexadecimal value.
@@ -766,20 +766,20 @@ SITAPI void RGL_SetDebugDrawTriggers(bool enabled);                         // S
 SITAPI bool RGL_GetDebugDrawTriggers(void);                                 // Gets the current state of trigger visualization.
 SITAPI void RGL_ToggleDebugDrawTriggers(void);                              // Toggles the visualization of invisible triggers.
 SITAPI void RGL_DrawPerformanceOverlay(void);                               // Draws an overlay with real-time rendering statistics (FPS, draw calls, batch stats, etc.).
-SITAPI void RGL_DrawWireframeBounds(vec3 min_bounds, vec3 max_bounds, Color color); // Draws a 3D wireframe bounding box for debugging.
+SITAPI void RGL_DrawWireframeBounds(Vector3 min_bounds, Vector3 max_bounds, Color color); // Draws a 3D wireframe bounding box for debugging.
 SITAPI void RGL_DrawPathDebugInfo(float player_z, bool show_control_points, bool show_splines); // Renders an in-world debug view of the active path's structure.
-SITAPI void RGL_DrawShadowVolumeDebug(vec3 world_pos, vec2 size, const RGLShadowConfig* config); // Renders a visualization of a stencil shadow volume for debugging.
+SITAPI void RGL_DrawShadowVolumeDebug(Vector3 world_pos, Vector2 size, const RGLShadowConfig* config); // Renders a visualization of a stencil shadow volume for debugging.
 SITAPI void RGL_DrawLevelDebug(void); // Renders a wireframe debug view of the active level's geometry.
 SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config);        // Draws a standard video test pattern for calibration and testing.
 SITAPI RGLTestPatternConfig RGL_GetDefaultTestPatternConfig(RGLTestPatternType type); // Gets a default configuration for a specific test pattern type.
-SITAPI void RGL_DrawGrid(vec2 spacing, vec2 offset, Color color);           // Draws a 2D grid of lines for calibration
-SITAPI void RGL_DrawCheckerboard(SitRectangle rect, vec2 tile_size, Color color1, Color color2); // Fills a rectangle with a checkerboard pattern.
+SITAPI void RGL_DrawGrid(Vector2 spacing, Vector2 offset, Color color);           // Draws a 2D grid of lines for calibration
+SITAPI void RGL_DrawCheckerboard(SitRectangle rect, Vector2 tile_size, Color color1, Color color2); // Fills a rectangle with a checkerboard pattern.
 SITAPI void RGL_DrawStripes(SitRectangle rect, float stripe_width, bool vertical, Color color1, Color color2); // Fills a rectangle with a stripe pattern.
 SITAPI void RGL_DrawSafeArea(SitRectangle screen, float overscan_pct, Color color); // Draws an outline representing the TV-safe area.
-SITAPI void RGL_DrawCrosshair(vec2 center, float size, float thickness, Color color); // Draws a crosshair marker.
-SITAPI void RGL_DrawArrow(vec2 start, vec2 end, float head_size, float thickness, Color color); // Draws a line with an arrowhead at the end.
-SITAPI void RGL_DrawRuler(vec2 start, vec2 end, float tick_spacing, float tick_length, Color color); // Draws a ruler with tick marks for calibration.
-SITAPI void RGL_DrawLabeledSitRectangle(SitRectangle rect, const char* label, RGLBitmapFont font, Color rect_color, Color text_color); // Draws a rectangle with a centered text label.
+SITAPI void RGL_DrawCrosshair(Vector2 center, float size, float thickness, Color color); // Draws a crosshair marker.
+SITAPI void RGL_DrawArrow(Vector2 start, Vector2 end, float head_size, float thickness, Color color); // Draws a line with an arrowhead at the end.
+SITAPI void RGL_DrawRuler(Vector2 start, Vector2 end, float tick_spacing, float tick_length, Color color); // Draws a ruler with tick marks for calibration.
+SITAPI void RGL_DrawLabeledRectangle(SitRectangle rect, const char* label, RGLBitmapFont font, Color rect_color, Color text_color); // Draws a rectangle with a centered text label.
 
 // ===================================================================================
 // --- IMPLEMENTATION ---
@@ -857,62 +857,10 @@ typedef struct {
 
 // --- Internal State ---
 
-typedef struct {
-    float x, y;
-    float scale;
-} RGLScalerProjection;
-
-static void RGL_ProjectScalerPoint(vec3 world_pos, float cam_x, float cam_y, float cam_z, float cam_depth, float screen_w, float screen_h, RGLScalerProjection* out_proj) {
-    float scale = cam_depth / (world_pos[2] - cam_z);
-    out_proj->x = (1 + scale * (world_pos[0] - cam_x)) * screen_w / 2;
-    out_proj->y = (1 - scale * (world_pos[1] - cam_y)) * screen_h / 2;
-    out_proj->scale = scale;
-}
-
-static bool RGL_GetPathSegmentPoints(RGLScalerProjection p_near, RGLScalerProjection p_far, float w_near, float w_far, vec2* out_points) {
-    // Calculate the 4 screen points for a road segment (trapezoid)
-    // Scale widths
-    float wn = w_near * p_near.scale * 0.5f; // Half width in screen space
-    float wf = w_far * p_far.scale * 0.5f;
-
-    // Screen coordinates
-    out_points[0][0] = p_far.x - wf;  out_points[0][1] = p_far.y;  // Top Left
-    out_points[1][0] = p_far.x + wf;  out_points[1][1] = p_far.y;  // Top Right
-    out_points[2][0] = p_near.x + wn; out_points[2][1] = p_near.y; // Bottom Right
-    out_points[3][0] = p_near.x - wn; out_points[3][1] = p_near.y; // Bottom Left
-
-    return true; // Valid polygon
-}
 
 /**
  * @brief (INTERNAL) Helper to draw one segment of the Path surface (Path + rumbles).
  */
-static void _RGL_DrawPathAsRoadSurface(RGLScalerProjection p_near, RGLScalerProjection p_far, RGLPathPoint* prop_near, RGLPathPoint* prop_far, bool is_split) {
-    vec2 points[4];
-
-    // Determine which set of properties to use (primary or split Path)
-    float width_near = is_split ? prop_near->split_width : prop_near->primary_ribbon_width;
-    float width_far = is_split ? prop_far->split_width : prop_far->primary_ribbon_width;
-    // A more advanced implementation might have separate colors for split Paths
-    Color color_surface = prop_near->color_surface;
-    Color color_rumble = prop_near->color_rumble;
-
-    // 1. Draw wide polygon for rumble strips first (the background layer)
-    float total_width_near = width_near + prop_near->rumble_width * 2.0f;
-    float total_width_far = width_far + prop_far->rumble_width * 2.0f;
-    if (RGL_GetPathSegmentPoints(p_near, p_far, total_width_near, total_width_far, points)) {
-        // Alternate rumble color for a classic striped effect
-        Color final_rumble_color = ((int)(prop_near->world_z / 5.0f) % 2 == 0) ? color_rumble : WHITE;
-        RGL_DrawPolygonScreen(points, 4, final_rumble_color);
-    }
-
-    // 2. Draw Path surface polygon on top
-    if (RGL_GetPathSegmentPoints(p_near, p_far, width_near, width_far, points)) {
-        // Alternate Path color slightly for segment definition
-        Color final_Path_color = ((int)(prop_near->world_z / 10.0f) % 2 == 0) ? color_surface : (Color){60, 60, 60, 255};
-        RGL_DrawPolygonScreen(points, 4, final_Path_color);
-    }
-}
 
 
 // --- Define the static, default style instance ---
@@ -1285,8 +1233,7 @@ static int _RGL_FindPathIndex(const char* path_name); // Finds the internal arra
 static RGLPathData* _RGL_GetActivePathData(void); // Gets a direct pointer to the data of the currently active path.
 static int _RGL_FindPathPointIndexAt(RGLPathPoint* points, size_t num_points, float z_pos); // Performs a fast, O(log n) search to find the path segment index for a given Z-position.
 static void _RGL_CalculateBankedSurface(RGLPathPoint* point, float lateral_offset, vec3 out_normal); // Calculates the 3D surface normal for a path, accounting for its bank angle.
-static void _RGL_DrawSegment_Road(const RGLPathPoint* p_near, const RGLPathPoint* p_far, const vec3* normal, void* user_data); // The specific drawing logic for a single segment of a "road" style path.
-static void _RGL_DrawPathScene_Road(float player_z, int draw_distance, void* user_data); // The master drawing function for the default "road" style, which loops and calls _RGL_DrawSegment_Road.
+static void _RGL_DrawPathScene_Road(float player_z, int draw_distance, void* user_data); // The master drawing function for the default "road" style.
 //==================================================================================
 // World System: Level Helpers
 //==================================================================================
@@ -2092,7 +2039,7 @@ static int _RGL_FindFreeLightSlot(void) {
     return -1;
 }
 
-SITAPI int RGL_CreatePointLight(vec3 position, Color color, float radius, float intensity) {
+SITAPI int RGL_CreatePointLight(Vector3 position, Color color, float radius, float intensity) {
     ma_mutex_lock(&RGL.light_mutex);
     int index = _RGL_FindFreeLightSlot();
     if (index != -1) {
@@ -2101,7 +2048,7 @@ SITAPI int RGL_CreatePointLight(vec3 position, Color color, float radius, float 
         light->id = index + 1;
         light->is_active = true;
         light->type = RGL_LIGHT_TYPE_POINT;
-        glm_vec3_copy(position, light->position);
+        glm_vec3_copy(position.raw, light->position);
         light->color = color;
         light->radius = fmaxf(0.01f, radius);
         light->intensity = fmaxf(0.0f, intensity);
@@ -2110,7 +2057,7 @@ SITAPI int RGL_CreatePointLight(vec3 position, Color color, float radius, float 
     return (index != -1) ? (index + 1) : -1;
 }
 
-SITAPI int RGL_CreateDirectionalLight(vec3 direction, Color color, float intensity) {
+SITAPI int RGL_CreateDirectionalLight(Vector3 direction, Color color, float intensity) {
     ma_mutex_lock(&RGL.light_mutex);
     int index = _RGL_FindFreeLightSlot();
     if (index != -1) {
@@ -2119,7 +2066,7 @@ SITAPI int RGL_CreateDirectionalLight(vec3 direction, Color color, float intensi
         light->id = index + 1;
         light->is_active = true;
         light->type = RGL_LIGHT_TYPE_DIRECTIONAL;
-        glm_vec3_normalize_to(direction, light->direction);
+        glm_vec3_normalize_to(direction.raw, light->direction);
         light->color = color;
         light->intensity = fmaxf(0.0f, intensity);
     }
@@ -2127,7 +2074,7 @@ SITAPI int RGL_CreateDirectionalLight(vec3 direction, Color color, float intensi
     return (index != -1) ? (index + 1) : -1;
 }
 
-SITAPI int RGL_CreateSpotLight(vec3 position, vec3 direction, Color color, float radius, float intensity, float outer_angle_deg, float inner_angle_deg) {
+SITAPI int RGL_CreateSpotLight(Vector3 position, Vector3 direction, Color color, float radius, float intensity, float outer_angle_deg, float inner_angle_deg) {
     ma_mutex_lock(&RGL.light_mutex);
     int index = _RGL_FindFreeLightSlot();
     if (index != -1) {
@@ -2136,8 +2083,8 @@ SITAPI int RGL_CreateSpotLight(vec3 position, vec3 direction, Color color, float
         light->id = index + 1;
         light->is_active = true;
         light->type = RGL_LIGHT_TYPE_SPOT;
-        glm_vec3_copy(position, light->position);
-        glm_vec3_normalize_to(direction, light->direction);
+        glm_vec3_copy(position.raw, light->position);
+        glm_vec3_normalize_to(direction.raw, light->direction);
         light->color = color;
         light->radius = fmaxf(0.01f, radius);
         light->intensity = fmaxf(0.0f, intensity);
@@ -2158,7 +2105,7 @@ SITAPI int RGL_CreateSpotLight(vec3 position, vec3 direction, Color color, float
  * @param intensity The brightness multiplier.
  * @return The ID of the new light, or -1 on failure.
  */
-SITAPI int RGL_CreatePointLightYPQ(vec3 position, ColorYPQA ypq_color, float radius, float intensity) {
+SITAPI int RGL_CreatePointLightYPQ(Vector3 position, ColorYPQA ypq_color, float radius, float intensity) {
     // Assumes a function SituationColorFromYPQStruct exists, as it did in previous versions.
     Color rgb_color = SituationColorFromYPQ(ypq_color);
     return RGL_CreatePointLight(position, rgb_color, radius, intensity);
@@ -2221,20 +2168,20 @@ SITAPI void RGL_SetLightIntensity(int light_id, float intensity) {
     ma_mutex_unlock(&RGL.light_mutex);
 }
 
-SITAPI void RGL_SetLightPosition(int light_id, vec3 position) {
+SITAPI void RGL_SetLightPosition(int light_id, Vector3 position) {
     if (light_id <= 0 || light_id > RGL_MAX_LIGHTS) return;
     ma_mutex_lock(&RGL.light_mutex);
     if (RGL.lights[light_id - 1].id == light_id) {
-        glm_vec3_copy(position, RGL.lights[light_id - 1].position);
+        glm_vec3_copy(position.raw, RGL.lights[light_id - 1].position);
     }
     ma_mutex_unlock(&RGL.light_mutex);
 }
 
-SITAPI void RGL_SetLightDirection(int light_id, vec3 direction) {
+SITAPI void RGL_SetLightDirection(int light_id, Vector3 direction) {
     if (light_id <= 0 || light_id > RGL_MAX_LIGHTS) return;
     ma_mutex_lock(&RGL.light_mutex);
     if (RGL.lights[light_id - 1].id == light_id) {
-        glm_vec3_normalize_to(direction, RGL.lights[light_id - 1].direction);
+        glm_vec3_normalize_to(direction.raw, RGL.lights[light_id - 1].direction);
     }
     ma_mutex_unlock(&RGL.light_mutex);
 }
@@ -2250,7 +2197,7 @@ SITAPI void RGL_SetLightDirection(int light_id, vec3 direction) {
  *                    - y = Yaw (left/right rotation)
  *                    - z = Roll (sideways tilt)
  */
-SITAPI void RGL_SetLightDirectionFromYPR(int light_id, vec3 ypr_degrees) {
+SITAPI void RGL_SetLightDirectionFromYPR(int light_id, Vector3 ypr_degrees) {
     if (light_id <= 0 || light_id > RGL_MAX_LIGHTS) return;
 
     // 1. Define a base "forward" direction. In a typical right-handed system,
@@ -2260,7 +2207,7 @@ SITAPI void RGL_SetLightDirectionFromYPR(int light_id, vec3 ypr_degrees) {
 
     // 2. Convert the input degrees to radians, as cglm's math functions expect them.
     vec3 ypr_radians;
-    glm_vec3_copy((vec3){glm_rad(ypr_degrees[0]), glm_rad(ypr_degrees[1]), glm_rad(ypr_degrees[2])}, ypr_radians);
+    glm_vec3_copy((vec3){glm_rad(ypr_degrees.x), glm_rad(ypr_degrees.y), glm_rad(ypr_degrees.z)}, ypr_radians);
 
     // 3. Create a rotation matrix from the Euler angles.
     //    cglm's glm_euler_to_mat4 typically applies rotations in Yaw (Y), then Pitch (X), then Roll (Z) order.
@@ -2274,7 +2221,7 @@ SITAPI void RGL_SetLightDirectionFromYPR(int light_id, vec3 ypr_degrees) {
     glm_mat4_mulv3(rotation_matrix, base_direction, 0.0f, final_direction);
 
     // 5. Call the core, vector-based function. It will handle thread-safety and normalization.
-    RGL_SetLightDirection(light_id, final_direction);
+    RGL_SetLightDirection(light_id, (Vector3){final_direction[0], final_direction[1], final_direction[2]});
 }
 
 
@@ -2298,8 +2245,8 @@ SITAPI void RGL_SetLightDirectionFromYPR(int light_id, vec3 ypr_degrees) {
  * @param rect The rectangle.
  * @return True if the point is inside or on the edge of the rectangle.
  */
-SITAPI bool RGL_IsPointInSitRectangle(vec2 point, SitRectangle rect) {
-    return (point[0] >= rect.x && point[0] <= (rect.x + rect.width) && point[1] >= rect.y && point[1] <= (rect.y + rect.height));
+SITAPI bool RGL_IsPointInSitRectangle(Vector2 point, SitRectangle rect) {
+    return (point.x >= rect.x && point.x <= (rect.x + rect.width) && point.y >= rect.y && point.y <= (rect.y + rect.height));
 }
 
 /**
@@ -2309,9 +2256,9 @@ SITAPI bool RGL_IsPointInSitRectangle(vec2 point, SitRectangle rect) {
  * @param radius The radius of the circle.
  * @return True if the point is inside or on the edge of the circle.
  */
-SITAPI bool RGL_IsPointInCircle(vec2 point, vec2 center, float radius) {
-    float dx = point[0] - center[0];
-    float dy = point[1] - center[1];
+SITAPI bool RGL_IsPointInCircle(Vector2 point, Vector2 center, float radius) {
+    float dx = point.x - center.x;
+    float dy = point.y - center.y;
     // Use squared distance to avoid a costly sqrt() call
     return (dx*dx + dy*dy) <= (radius*radius);
 }
@@ -2333,7 +2280,7 @@ SITAPI SitRectangle RGL_GetScreenRect(void) {
     return RGL.viewport;
 }
 
-SITAPI void RGL_SetCamera2D(vec2 target, float rotation_degrees, float zoom) {
+SITAPI void RGL_SetCamera2D(Vector2 target, float rotation_degrees, float zoom) {
     if (!RGL.is_initialized) { _SituationSetErrorFromCode(SITUATION_ERROR_NOT_INITIALIZED, "RGL not initialized"); return; }
 
     // REMOVED: No longer need to call SituationGetVirtualDisplaySize here.
@@ -2345,20 +2292,20 @@ SITAPI void RGL_SetCamera2D(vec2 target, float rotation_degrees, float zoom) {
 
     // This logic is YOURS and is perfectly preserved.
     glm_mat4_identity(RGL.current_view_matrix);
-    glm_translate(RGL.current_view_matrix, (vec3){target[0], target[1], 0.0f});
+    glm_translate(RGL.current_view_matrix, (vec3){target.x, target.y, 0.0f});
     glm_rotate_z(RGL.current_view_matrix, glm_rad(-rotation_degrees), RGL.current_view_matrix);
     glm_scale(RGL.current_view_matrix, (vec3){zoom, zoom, 1.0f});
-    glm_translate(RGL.current_view_matrix, (vec3){-target[0], -target[1], 0.0f});
+    glm_translate(RGL.current_view_matrix, (vec3){-target.x, -target.y, 0.0f});
 
     // This is also preserved.
-    glm_vec3_copy((vec3){target[0], target[1], 0.0f}, RGL.camera_position);
+    glm_vec3_copy((vec3){target.x, target.y, 0.0f}, RGL.camera_position);
 }
 
-SITAPI void RGL_SetCamera3D(vec3 position, vec3 target, vec3 up, float fov_y_degrees) {
+SITAPI void RGL_SetCamera3D(Vector3 position, Vector3 target, Vector3 up, float fov_y_degrees) {
     if (!RGL.is_initialized) { _SituationSetErrorFromCode(SITUATION_ERROR_NOT_INITIALIZED, "RGL not initialized"); return; }
 
     // This is preserved.
-    glm_vec3_copy(position, RGL.camera_position);
+    glm_vec3_copy(position.raw, RGL.camera_position);
 
     // REMOVED: No longer need to call SituationGetVirtualDisplaySize here.
     // int width, height;
@@ -2369,7 +2316,7 @@ SITAPI void RGL_SetCamera3D(vec3 position, vec3 target, vec3 up, float fov_y_deg
 
     // These are preserved and are correct.
     glm_perspective(glm_rad(fov_y_degrees), aspect, RGL_DEFAULT_NEAR_PLANE, RGL_DEFAULT_FAR_PLANE, RGL.current_projection_matrix);
-    glm_lookat(position, target, up, RGL.current_view_matrix);
+    glm_lookat(position.raw, target.raw, up.raw, RGL.current_view_matrix);
 }
 
 // --- Coordinate Transformations & Geometry ---
@@ -2741,11 +2688,11 @@ SITAPI void RGL_DrawTexturePro(RGLSprite sprite, SitRectangle dest_rect, vec2 or
  * @param roll_degrees The 2D rotation in degrees.
  * @param color The fill color of the rectangle.
  */
-SITAPI void RGL_DrawSitRectangle(SitRectangle rect, float roll_degrees, Color color) {
+SITAPI void RGL_DrawRectangle(SitRectangle rect, float roll_degrees, Color color) {
     if (!RGL.is_initialized || !RGL.is_batching) return;
 
     // Draw an untextured shape by passing a zero-ID sprite and a zero-pixel origin.
-    RGL_DrawTexturePro((RGLSprite){0}, rect, (vec2){0.0f, 0.0f}, roll_degrees, color);
+    RGL_DrawTexturePro((RGLSprite){0}, rect, (Vector2){0.0f, 0.0f}, roll_degrees, color);
 }
 
 /**
@@ -2763,7 +2710,7 @@ SITAPI void RGL_DrawSitRectangle(SitRectangle rect, float roll_degrees, Color co
  * @param thick The thickness of the line in world/screen units.
  * @param color The color of the line.
  */
-SITAPI void RGL_DrawLineEx(vec2 start_pos, vec2 end_pos, float thick, Color color) {
+SITAPI void RGL_DrawLineEx(Vector2 start_pos, Vector2 end_pos, float thick, Color color) {
     // 1. --- Pre-flight Checks ---
     if (!RGL.is_batching || thick <= 0.0f) return;
     if (!_RGL_EnsureCommandCapacity(1)) return;
@@ -2771,7 +2718,7 @@ SITAPI void RGL_DrawLineEx(vec2 start_pos, vec2 end_pos, float thick, Color colo
     // 2. --- Direct Vertex Calculation (from the patch) ---
     // This is the efficient core of the new function.
     vec2 delta;
-    glm_vec2_sub(end_pos, start_pos, delta);
+    glm_vec2_sub(end_pos.raw, start_pos.raw, delta);
     float length = glm_vec2_norm(delta);
     if (length < 0.001f) return; // Don't draw zero-length lines.
 
@@ -2782,10 +2729,10 @@ SITAPI void RGL_DrawLineEx(vec2 start_pos, vec2 end_pos, float thick, Color colo
 
     // Calculate the 4 corners of the quad in 3D space (Z=0 for 2D lines)
     vec3 p1, p2, p3, p4; // bl, br, tr, tl
-    glm_vec3_copy((vec3){ start_pos[0] - perp[0], start_pos[1] - perp[1], 0.0f }, p1);
-    glm_vec3_copy((vec3){ end_pos[0] - perp[0],   end_pos[1] - perp[1],   0.0f }, p2);
-    glm_vec3_copy((vec3){ end_pos[0] + perp[0],   end_pos[1] + perp[1],   0.0f }, p3);
-    glm_vec3_copy((vec3){ start_pos[0] + perp[0],   start_pos[1] + perp[1],   0.0f }, p4);
+    glm_vec3_copy((vec3){ start_pos.x - perp[0], start_pos.y - perp[1], 0.0f }, p1);
+    glm_vec3_copy((vec3){ end_pos.x - perp[0],   end_pos.y - perp[1],   0.0f }, p2);
+    glm_vec3_copy((vec3){ end_pos.x + perp[0],   end_pos.y + perp[1],   0.0f }, p3);
+    glm_vec3_copy((vec3){ start_pos.x + perp[0], start_pos.y + perp[1], 0.0f }, p4);
 
     // 3. --- Queue the Command Directly ---
     // Use the safe "populate-then-commit" pattern.
@@ -4361,21 +4308,21 @@ static void _RGL_DrawCubeFaces(vec3 position, float size, RGLMaterial material) 
 }
 
 // --- Draw a cube ---
-SITAPI void RGL_DrawCube(vec3 position, float size, RGLMaterial material) {
+SITAPI void RGL_DrawCube(Vector3 position, float size, RGLMaterial material) {
     if (size <= 0.0f || material.ambient < 0.0f || material.ambient > 1.0f) {
         _SituationSetErrorFromCode(SITUATION_ERROR_INVALID_PARAM, "Invalid cube parameters");
         return;
     }
-    _RGL_DrawCubeFaces(position, size, material);
+    _RGL_DrawCubeFaces(position.raw, size, material);
 }
 
 // --- Draw a 3D line ---
-SITAPI void RGL_DrawLine3D(vec3 start, vec3 end, float thickness, Color color) {
+SITAPI void RGL_DrawLine3D(Vector3 start, Vector3 end, float thickness, Color color) {
     if (thickness <= 0.0f || color.a == 0) {
         _SituationSetErrorFromCode(SITUATION_ERROR_INVALID_PARAM, "Invalid line parameters");
         return;
     }
-    _RGL_DrawLineQuad(start, end, thickness, color);
+    _RGL_DrawLineQuad(start.raw, end.raw, thickness, color);
 }
 
 /**
@@ -4391,22 +4338,22 @@ SITAPI void RGL_DrawLine3D(vec3 start, vec3 end, float thickness, Color color) {
  * @param tint The color to tint the quad.
  * @param base_light The base ambient light multiplier for the surface [0.0 - 1.0].
  */
-SITAPI void RGL_DrawQuad3D(vec3 p1, vec3 p2, vec3 p3, vec3 p4, vec3 normal, RGLSprite sprite, Color tint, float base_light) {
+SITAPI void RGL_DrawQuad3D(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 normal, RGLSprite sprite, Color tint, float base_light) {
     if (!_RGL_EnsureCommandCapacity(1)) return;
 
     RGLInternalDraw* cmd = &RGL.commands[RGL.command_count++];
     cmd->texture = sprite.texture;
     cmd->is_triangle = false;
-    cmd->z_depth = (p1[2] + p2[2] + p3[2] + p4[2]) * 0.25f; // Average Z for sorting
+    cmd->z_depth = (p1.z + p2.z + p3.z + p4.z) * 0.25f; // Average Z for sorting
 
     // --- Assign Vertices ---
     // The batcher expects a specific winding order for triangles (0,1,2 and 0,2,3).
     // To make this function intuitive, we accept any 4 points and internally arrange them.
     // Let's assume a common order like Bottom-Left, Bottom-Right, Top-Right, Top-Left.
-    glm_vec3_copy(p4, cmd->world_positions[0]); // Top-Left
-    glm_vec3_copy(p1, cmd->world_positions[1]); // Bottom-Left
-    glm_vec3_copy(p2, cmd->world_positions[2]); // Bottom-Right
-    glm_vec3_copy(p3, cmd->world_positions[3]); // Top-Right
+    glm_vec3_copy(p4.raw, cmd->world_positions[0]); // Top-Left
+    glm_vec3_copy(p1.raw, cmd->world_positions[1]); // Bottom-Left
+    glm_vec3_copy(p2.raw, cmd->world_positions[2]); // Bottom-Right
+    glm_vec3_copy(p3.raw, cmd->world_positions[3]); // Top-Right
 
     // --- Calculate and Assign UVs from Sprite ---
     float u1 = 0.0f, v1 = 0.0f, u2 = 1.0f, v2 = 1.0f;
@@ -4427,7 +4374,7 @@ SITAPI void RGL_DrawQuad3D(vec3 p1, vec3 p2, vec3 p3, vec3 p4, vec3 normal, RGLS
     SituationConvertColorToVec4(tint, v4_tint);
     for (int i = 0; i < 4; i++) {
         glm_vec4_copy(v4_tint, cmd->colors[i]);
-        glm_vec3_copy(normal, cmd->normals[i]);
+        glm_vec3_copy(normal.raw, cmd->normals[i]);
         // Use the field name consistent with your final RGLInternalDraw struct
         cmd->light_levels[i] = base_light;
     }
@@ -5801,7 +5748,7 @@ SITAPI void RGL_DrawCircle(vec2 center, float radius, Color color) {
  * @param thickness The thickness of the outline in pixels.
  * @param color The color of the outline.
  */
-SITAPI void RGL_DrawCircleOutline(vec2 center, float radius, float thickness, Color color) {
+SITAPI void RGL_DrawCircleOutline(Vector2 center, float radius, float thickness, Color color) {
     if (!RGL.is_batching) return;
     if (radius <= 0 || thickness <= 0) return;
 
@@ -5813,19 +5760,19 @@ SITAPI void RGL_DrawCircleOutline(vec2 center, float radius, float thickness, Co
         float angle1 = 2.0f * M_PI * (float)i / (float)RGL_SHAPE_SEGMENTS;
         float angle2 = 2.0f * M_PI * (float)(i + 1) / (float)RGL_SHAPE_SEGMENTS;
 
-        vec2 quad_points[4];
+        Vector2 quad_points[4];
         // Outer point 1
-        quad_points[0][0] = center[0] + cosf(angle1) * radius;
-        quad_points[0][1] = center[1] + sinf(angle1) * radius;
+        quad_points[0].x = center.x + cosf(angle1) * radius;
+        quad_points[0].y = center.y + sinf(angle1) * radius;
         // Inner point 1
-        quad_points[1][0] = center[0] + cosf(angle1) * inner_radius;
-        quad_points[1][1] = center[1] + sinf(angle1) * inner_radius;
+        quad_points[1].x = center.x + cosf(angle1) * inner_radius;
+        quad_points[1].y = center.y + sinf(angle1) * inner_radius;
         // Inner point 2
-        quad_points[2][0] = center[0] + cosf(angle2) * inner_radius;
-        quad_points[2][1] = center[1] + sinf(angle2) * inner_radius;
+        quad_points[2].x = center.x + cosf(angle2) * inner_radius;
+        quad_points[2].y = center.y + sinf(angle2) * inner_radius;
         // Outer point 2
-        quad_points[3][0] = center[0] + cosf(angle2) * radius;
-        quad_points[3][1] = center[1] + sinf(angle2) * radius;
+        quad_points[3].x = center.x + cosf(angle2) * radius;
+        quad_points[3].y = center.y + sinf(angle2) * radius;
 
         RGL_DrawPolygonScreen(quad_points, 4, color);
     }
@@ -5914,7 +5861,7 @@ SITAPI void RGL_DrawRing(vec2 center, float inner_radius, float outer_radius, Co
  * @param end The ending position (x, y) of the line.
  * @param color The color of the line.
  */
-SITAPI void RGL_DrawLine(vec2 start, vec2 end, Color color) {
+SITAPI void RGL_DrawLine(Vector2 start, Vector2 end, Color color) {
     if (!RGL.is_batching) return;
     RGL_DrawLineEx(start, end, 1.0f, color);
 }
@@ -5928,10 +5875,10 @@ SITAPI void RGL_DrawLine(vec2 start, vec2 end, Color color) {
  * @param thickness The thickness of the curve's line.
  * @param color The color of the curve.
  */
-SITAPI void RGL_DrawLineBezier(vec2 start, vec2 end, vec2 control1, vec2 control2, float thickness, Color color) {
+SITAPI void RGL_DrawLineBezier(Vector2 start, Vector2 end, Vector2 control1, Vector2 control2, float thickness, Color color) {
     if (!RGL.is_batching) return;
 
-    vec2 points[RGL_SHAPE_SEGMENTS + 1];
+    Vector2 points[RGL_SHAPE_SEGMENTS + 1];
     for (int i = 0; i <= RGL_SHAPE_SEGMENTS; i++) {
         float t = (float)i / (float)RGL_SHAPE_SEGMENTS;
         float u = 1.0f - t;
@@ -5945,8 +5892,8 @@ SITAPI void RGL_DrawLineBezier(vec2 start, vec2 end, vec2 control1, vec2 control
         float b2 = 3.0f * u * tt;
         float b3 = ttt;
 
-        points[i][0] = (b0 * start[0]) + (b1 * control1[0]) + (b2 * control2[0]) + (b3 * end[0]);
-        points[i][1] = (b0 * start[1]) + (b1 * control1[1]) + (b2 * control2[1]) + (b3 * end[1]);
+        points[i].x = (b0 * start.x) + (b1 * control1.x) + (b2 * control2.x) + (b3 * end.x);
+        points[i].y = (b0 * start.y) + (b1 * control1.y) + (b2 * control2.y) + (b3 * end.y);
     }
     RGL_DrawPolyline(points, RGL_SHAPE_SEGMENTS + 1, thickness, color, false);
 }
@@ -5959,7 +5906,7 @@ SITAPI void RGL_DrawLineBezier(vec2 start, vec2 end, vec2 control1, vec2 control
  * @param color The color of the lines.
  * @param closed If true, a line will be drawn from the last point to the first.
  */
-SITAPI void RGL_DrawPolyline(vec2* points, int point_count, float thickness, Color color, bool closed) {
+SITAPI void RGL_DrawPolyline(Vector2* points, int point_count, float thickness, Color color, bool closed) {
     if (!RGL.is_batching || point_count < 2) return;
 
     for (int i = 0; i < point_count - 1; i++) {
@@ -6026,12 +5973,12 @@ SITAPI void RGL_DrawRuler(vec2 start, vec2 end, float tick_spacing, float tick_l
  * @param thickness The thickness of the outline in pixels.
  * @param color The color of the outline.
  */
-SITAPI void RGL_DrawSitRectangleOutline(SitRectangle rect, float thickness, Color color) {
+SITAPI void RGL_DrawRectangleOutline(SitRectangle rect, float thickness, Color color) {
     if (!RGL.is_batching) return;
-    vec2 tl = {rect.x, rect.y};
-    vec2 tr = {rect.x + rect.width, rect.y};
-    vec2 bl = {rect.x, rect.y + rect.height};
-    vec2 br = {rect.x + rect.width, rect.y + rect.height};
+    Vector2 tl = {rect.x, rect.y};
+    Vector2 tr = {rect.x + rect.width, rect.y};
+    Vector2 bl = {rect.x, rect.y + rect.height};
+    Vector2 br = {rect.x + rect.width, rect.y + rect.height};
 
     RGL_DrawLineEx(tl, tr, thickness, color);
     RGL_DrawLineEx(tr, br, thickness, color);
@@ -6045,10 +5992,10 @@ SITAPI void RGL_DrawSitRectangleOutline(SitRectangle rect, float thickness, Colo
  * @param roundness The radius of the corners. Will be clamped to half the rectangle's smaller dimension.
  * @param color The fill color of the rectangle.
  */
-SITAPI void RGL_DrawSitRectangleRounded(SitRectangle rect, float roundness, Color color) {
+SITAPI void RGL_DrawRectangleRounded(SitRectangle rect, float roundness, Color color) {
     if (!RGL.is_batching) return;
     if (roundness <= 0) {
-        RGL_DrawSitRectangle(rect, 0.0f, color);
+        RGL_DrawRectangle(rect, 0.0f, color);
         return;
     }
 
@@ -6057,16 +6004,16 @@ SITAPI void RGL_DrawSitRectangleRounded(SitRectangle rect, float roundness, Colo
     if (r > rect.height/2.0f) r = rect.height/2.0f;
 
     // Center rectangle
-    RGL_DrawSitRectangle((SitRectangle){rect.x + r, rect.y, rect.width - 2*r, rect.height}, 0.0f, color);
+    RGL_DrawRectangle((SitRectangle){rect.x + r, rect.y, rect.width - 2*r, rect.height}, 0.0f, color);
     // Left and right rectangles
-    RGL_DrawSitRectangle((SitRectangle){rect.x, rect.y + r, r, rect.height - 2*r}, 0.0f, color);
-    RGL_DrawSitRectangle((SitRectangle){rect.x + rect.width - r, rect.y + r, r, rect.height - 2*r}, 0.0f, color);
+    RGL_DrawRectangle((SitRectangle){rect.x, rect.y + r, r, rect.height - 2*r}, 0.0f, color);
+    RGL_DrawRectangle((SitRectangle){rect.x + rect.width - r, rect.y + r, r, rect.height - 2*r}, 0.0f, color);
 
     // Draw corner arcs
-    RGL_DrawArc((vec2){rect.x + r, rect.y + r}, r, 180, 270, color); // Top-left
-    RGL_DrawArc((vec2){rect.x + rect.width - r, rect.y + r}, r, 270, 360, color); // Top-right
-    RGL_DrawArc((vec2){rect.x + r, rect.y + rect.height - r}, r, 90, 180, color); // Bottom-left
-    RGL_DrawArc((vec2){rect.x + rect.width - r, rect.y + rect.height - r}, r, 0, 90, color); // Bottom-right
+    RGL_DrawArc((Vector2){rect.x + r, rect.y + r}, r, 180, 270, color); // Top-left
+    RGL_DrawArc((Vector2){rect.x + rect.width - r, rect.y + r}, r, 270, 360, color); // Top-right
+    RGL_DrawArc((Vector2){rect.x + r, rect.y + rect.height - r}, r, 90, 180, color); // Bottom-left
+    RGL_DrawArc((Vector2){rect.x + rect.width - r, rect.y + rect.height - r}, r, 0, 90, color); // Bottom-right
 }
 
 /**
@@ -6076,7 +6023,7 @@ SITAPI void RGL_DrawSitRectangleRounded(SitRectangle rect, float roundness, Colo
  * @param thickness The thickness of the outline.
  * @param color The color of the outline.
  */
-SITAPI void RGL_DrawSitRectangleRoundedOutline(SitRectangle rect, float roundness, float thickness, Color color) {
+SITAPI void RGL_DrawRectangleRoundedOutline(SitRectangle rect, float roundness, float thickness, Color color) {
     // This can be complex. A simple approximation is to draw rounded Paths.
     if (!RGL.is_batching) return;
     float r = roundness;
@@ -6084,44 +6031,44 @@ SITAPI void RGL_DrawSitRectangleRoundedOutline(SitRectangle rect, float roundnes
     if (r > rect.height/2.0f) r = rect.height/2.0f;
 
     // Draw straight parts
-    RGL_DrawLineEx((vec2){rect.x + r, rect.y}, (vec2){rect.x + rect.width - r, rect.y}, thickness, color);
-    RGL_DrawLineEx((vec2){rect.x + r, rect.y + rect.height}, (vec2){rect.x + rect.width - r, rect.y + rect.height}, thickness, color);
-    RGL_DrawLineEx((vec2){rect.x, rect.y + r}, (vec2){rect.x, rect.y + rect.height - r}, thickness, color);
-    RGL_DrawLineEx((vec2){rect.x + rect.width, rect.y + r}, (vec2){rect.x + rect.width, rect.y + rect.height - r}, thickness, color);
+    RGL_DrawLineEx((Vector2){rect.x + r, rect.y}, (Vector2){rect.x + rect.width - r, rect.y}, thickness, color);
+    RGL_DrawLineEx((Vector2){rect.x + r, rect.y + rect.height}, (Vector2){rect.x + rect.width - r, rect.y + rect.height}, thickness, color);
+    RGL_DrawLineEx((Vector2){rect.x, rect.y + r}, (Vector2){rect.x, rect.y + rect.height - r}, thickness, color);
+    RGL_DrawLineEx((Vector2){rect.x + rect.width, rect.y + r}, (Vector2){rect.x + rect.width, rect.y + rect.height - r}, thickness, color);
 
     // Draw corner arcs (as polylines)
     int num_segments = RGL_SHAPE_SEGMENTS / 4;
-    vec2 points[num_segments + 1];
+    Vector2 points[num_segments + 1];
 
     // Top-left
     for(int i=0; i <= num_segments; i++) {
         float angle = 180.0f + 90.0f * (float)i / (float)num_segments;
-        points[i][0] = (rect.x + r) + cosf(angle * M_PI/180.0f) * r;
-        points[i][1] = (rect.y + r) + sinf(angle * M_PI/180.0f) * r;
+        points[i].x = (rect.x + r) + cosf(angle * M_PI/180.0f) * r;
+        points[i].y = (rect.y + r) + sinf(angle * M_PI/180.0f) * r;
     }
     RGL_DrawPolyline(points, num_segments+1, thickness, color, false);
 
     // Top-right
     for(int i=0; i <= num_segments; i++) {
         float angle = 270.0f + 90.0f * (float)i / (float)num_segments;
-        points[i][0] = (rect.x + rect.width - r) + cosf(angle * M_PI/180.0f) * r;
-        points[i][1] = (rect.y + r) + sinf(angle * M_PI/180.0f) * r;
+        points[i].x = (rect.x + rect.width - r) + cosf(angle * M_PI/180.0f) * r;
+        points[i].y = (rect.y + r) + sinf(angle * M_PI/180.0f) * r;
     }
     RGL_DrawPolyline(points, num_segments+1, thickness, color, false);
 
     // Bottom-left
     for(int i=0; i <= num_segments; i++) {
         float angle = 90.0f + 90.0f * (float)i / (float)num_segments;
-        points[i][0] = (rect.x + r) + cosf(angle * M_PI/180.0f) * r;
-        points[i][1] = (rect.y + rect.height - r) + sinf(angle * M_PI/180.0f) * r;
+        points[i].x = (rect.x + r) + cosf(angle * M_PI/180.0f) * r;
+        points[i].y = (rect.y + rect.height - r) + sinf(angle * M_PI/180.0f) * r;
     }
     RGL_DrawPolyline(points, num_segments+1, thickness, color, false);
 
     // Bottom-right
     for(int i=0; i <= num_segments; i++) {
         float angle = 0.0f + 90.0f * (float)i / (float)num_segments;
-        points[i][0] = (rect.x + rect.width - r) + cosf(angle * M_PI/180.0f) * r;
-        points[i][1] = (rect.y + rect.height - r) + sinf(angle * M_PI/180.0f) * r;
+        points[i].x = (rect.x + rect.width - r) + cosf(angle * M_PI/180.0f) * r;
+        points[i].y = (rect.y + rect.height - r) + sinf(angle * M_PI/180.0f) * r;
     }
     RGL_DrawPolyline(points, num_segments+1, thickness, color, false);
 }
@@ -6134,7 +6081,7 @@ SITAPI void RGL_DrawSitRectangleRoundedOutline(SitRectangle rect, float roundnes
  * @param bottom_left The color of the bottom-left corner.
  * @param bottom_right The color of the bottom-right corner.
  */
-SITAPI void RGL_DrawSitRectangleGradient(SitRectangle rect, Color top_left, Color top_right, Color bottom_left, Color bottom_right) {
+SITAPI void RGL_DrawRectangleGradient(SitRectangle rect, Color top_left, Color top_right, Color bottom_left, Color bottom_right) {
     if (!RGL.is_batching) return;
 
     Color colors[4] = { top_left, top_right, bottom_right, bottom_left };
@@ -6153,11 +6100,11 @@ SITAPI void RGL_DrawSitRectangleGradient(SitRectangle rect, Color top_left, Colo
  * @note Ideal for achieving CRT/TV-like aesthetics.
  * @param rect The rectangle's position and size.
  * @param color The fill color, specified in the YPQ color space.
- * @see RGL_DrawSitRectangle, ColorYPQA
+ * @see RGL_DrawRectangle, ColorYPQA
  */
-SITAPI void RGL_DrawSitRectangleYPQ(SitRectangle rect, ColorYPQA color) {
+SITAPI void RGL_DrawRectangleYPQ(SitRectangle rect, ColorYPQA color) {
     if (!RGL.is_batching) return;
-    RGL_DrawSitRectangle(rect, 0.0f, SituationColorFromYPQ(color));
+    RGL_DrawRectangle(rect, 0.0f, SituationColorFromYPQ(color));
 }
 
 // --- Pattern Fills ---
@@ -6184,7 +6131,7 @@ SITAPI void RGL_DrawCheckerboard(SitRectangle rect, vec2 tile_size, Color color1
             if (tile_rect.x + tile_rect.width > rect.x + rect.width) tile_rect.width = (rect.x + rect.width) - tile_rect.x;
             if (tile_rect.y + tile_rect.height > rect.y + rect.height) tile_rect.height = (rect.y + rect.height) - tile_rect.y;
             if (tile_rect.width > 0 && tile_rect.height > 0) {
-                 RGL_DrawSitRectangle(tile_rect, 0.0f, ((x + y) % 2 == 0) ? color1 : color2);
+                 RGL_DrawRectangle(tile_rect, 0.0f, ((x + y) % 2 == 0) ? color1 : color2);
             }
         }
     }
@@ -6208,14 +6155,14 @@ SITAPI void RGL_DrawStripes(SitRectangle rect, float stripe_width, bool vertical
         for (int i = 0; i < num_stripes; i++) {
             SitRectangle stripe_rect = { rect.x + i * stripe_width, rect.y, stripe_width, rect.height };
             if (stripe_rect.x + stripe_rect.width > rect.x + rect.width)    stripe_rect.width = (rect.x + rect.width) - stripe_rect.x;
-            if (stripe_rect.width > 0)                                      RGL_DrawSitRectangle(stripe_rect, 0.0f, (i % 2 == 0) ? color1 : color2);
+            if (stripe_rect.width > 0)                                      RGL_DrawRectangle(stripe_rect, 0.0f, (i % 2 == 0) ? color1 : color2);
         }
     } else { // Horizontal
         int num_stripes = (int)ceilf(rect.height / stripe_width);
         for (int i = 0; i < num_stripes; i++) {
             SitRectangle stripe_rect = { rect.x, rect.y + i * stripe_width, rect.width, stripe_width };
             if (stripe_rect.y + stripe_rect.height > rect.y + rect.height)  stripe_rect.height = (rect.y + rect.height) - stripe_rect.y;
-            if (stripe_rect.height > 0)                                     RGL_DrawSitRectangle(stripe_rect, 0.0f, (i % 2 == 0) ? color1 : color2);
+            if (stripe_rect.height > 0)                                     RGL_DrawRectangle(stripe_rect, 0.0f, (i % 2 == 0) ? color1 : color2);
         }
     }
 }
@@ -6233,7 +6180,7 @@ SITAPI void RGL_DrawSafeArea(SitRectangle screen, float overscan_pct, Color colo
     float margin_x = screen.width * overscan_pct;
     float margin_y = screen.height * overscan_pct;
     SitRectangle safe_area = { screen.x + margin_x, screen.y + margin_y, screen.width - 2 * margin_x, screen.height - 2 * margin_y };
-    RGL_DrawSitRectangleOutline(safe_area, 1.0f, color);
+    RGL_DrawRectangleOutline(safe_area, 1.0f, color);
 }
 
 /**
@@ -6288,8 +6235,8 @@ SITAPI void RGL_DrawArrow(vec2 start, vec2 end, float head_size, float thickness
 SITAPI void RGL_DrawLabeledSitRectangle(SitRectangle rect, const char* label, RGLBitmapFont font, Color rect_color, Color text_color) {
     if (!RGL.is_batching) return;
 
-    RGL_DrawSitRectangle(rect, 0.0f, rect_color);
-    RGL_DrawSitRectangleOutline(rect, 1.0f, RGL_ColorBrightness(rect_color, -0.5f));
+    RGL_DrawRectangle(rect, 0.0f, rect_color);
+    RGL_DrawRectangleOutline(rect, 1.0f, RGL_ColorBrightness(rect_color, -0.5f));
 
     Vector2 text_size = RGL_MeasureText(label, font);
     vec2 text_pos = {
@@ -6839,6 +6786,64 @@ static void _RGL_DrawPathQuad(vec3 p1, vec3 p2, vec3 p3, vec3 p4, const vec3 nor
     RGL_DrawQuad3D(p1, p2, p3, p4, (float*)normal, texture, color, 1.0f);
 }
 
+// Scaler Projection Structure for Retro Mode
+typedef struct {
+    float x, y;
+    float scale;
+} RGLScalerProjection;
+
+static void RGL_ProjectScalerPoint(vec3 world_pos, float cam_x, float cam_y, float cam_z, float cam_depth, float screen_w, float screen_h, RGLScalerProjection* out_proj) {
+    float scale = cam_depth / (world_pos[2] - cam_z);
+    out_proj->x = (1 + scale * (world_pos[0] - cam_x)) * screen_w / 2;
+    out_proj->y = (1 - scale * (world_pos[1] - cam_y)) * screen_h / 2;
+    out_proj->scale = scale;
+}
+
+static bool RGL_GetPathSegmentPoints(RGLScalerProjection p_near, RGLScalerProjection p_far, float w_near, float w_far, vec2* out_points) {
+    // Calculate the 4 screen points for a road segment (trapezoid)
+    // Scale widths
+    float wn = w_near * p_near.scale * 0.5f; // Half width in screen space
+    float wf = w_far * p_far.scale * 0.5f;
+
+    // Screen coordinates
+    out_points[0][0] = p_far.x - wf;  out_points[0][1] = p_far.y;  // Top Left
+    out_points[1][0] = p_far.x + wf;  out_points[1][1] = p_far.y;  // Top Right
+    out_points[2][0] = p_near.x + wn; out_points[2][1] = p_near.y; // Bottom Right
+    out_points[3][0] = p_near.x - wn; out_points[3][1] = p_near.y; // Bottom Left
+
+    return true; // Valid polygon
+}
+
+/**
+ * @brief (INTERNAL) Helper to draw one segment of the Path surface (Path + rumbles).
+ */
+static void _RGL_DrawPathAsRoadSurface(RGLScalerProjection p_near, RGLScalerProjection p_far, RGLPathPoint* prop_near, RGLPathPoint* prop_far, bool is_split) {
+    vec2 points[4];
+
+    // Determine which set of properties to use (primary or split Path)
+    float width_near = is_split ? prop_near->split_width : prop_near->primary_ribbon_width;
+    float width_far = is_split ? prop_far->split_width : prop_far->primary_ribbon_width;
+    // A more advanced implementation might have separate colors for split Paths
+    Color color_surface = prop_near->color_surface;
+    Color color_rumble = prop_near->color_rumble;
+
+    // 1. Draw wide polygon for rumble strips first (the background layer)
+    float total_width_near = width_near + prop_near->rumble_width * 2.0f;
+    float total_width_far = width_far + prop_far->rumble_width * 2.0f;
+    if (RGL_GetPathSegmentPoints(p_near, p_far, total_width_near, total_width_far, points)) {
+        // Alternate rumble color for a classic striped effect
+        Color final_rumble_color = ((int)(prop_near->world_z / 5.0f) % 2 == 0) ? color_rumble : WHITE;
+        RGL_DrawPolygonScreen(points, 4, final_rumble_color);
+    }
+
+    // 2. Draw Path surface polygon on top
+    if (RGL_GetPathSegmentPoints(p_near, p_far, width_near, width_far, points)) {
+        // Alternate Path color slightly for segment definition
+        Color final_Path_color = ((int)(prop_near->world_z / 10.0f) % 2 == 0) ? color_surface : (Color){60, 60, 60, 255};
+        RGL_DrawPolygonScreen(points, 4, final_Path_color);
+    }
+}
+
 static void _RGL_DrawSegment_Road(const RGLPathPoint* p_near, const RGLPathPoint* p_far, const vec3* normal, void* user_data) {
     (void)user_data; // Unused in this default implementation
 
@@ -6875,8 +6880,8 @@ static void _RGL_DrawSegment_Road(const RGLPathPoint* p_near, const RGLPathPoint
         for(int j = 1; j < p_near->primary_lanes; ++j) {
             float x_offset = -p_near->primary_ribbon_width * 0.5f + j * lane_width;
             vec3 l1 = {p_near->world_x_offset + x_offset - line_half_w, p_near->world_y_offset, z_near};
-        vec3 l2 = {p_far->world_x_offset  + x_offset - line_half_w, p_far->world_y_offset  + 0.01f, z_far};
-        vec3 l3 = {p_far->world_x_offset  + x_offset + line_half_w, p_far->world_y_offset  + 0.01f, z_far};
+            vec3 l2 = {p_far->world_x_offset  + x_offset - line_half_w, p_far->world_y_offset  + 0.01f, z_far};
+            vec3 l3 = {p_far->world_x_offset  + x_offset + line_half_w, p_far->world_y_offset  + 0.01f, z_far};
             vec3 l4 = {p_near->world_x_offset + x_offset + line_half_w, p_near->world_y_offset, z_near};
             _RGL_DrawPathQuad(l1, l2, l3, l4, *normal, (RGLSprite){0}, p_near->color_lines);
         }
@@ -6894,6 +6899,7 @@ static void _RGL_DrawSegment_Road(const RGLPathPoint* p_near, const RGLPathPoint
         _RGL_DrawPathQuad(s1, s2, s3, s4, *normal, p_near->split_surface_texture, split_color);
     }
 }
+
 
 /**
  * @brief [Convenience Wrapper] Draws the active path as a classic road.
@@ -7800,7 +7806,7 @@ SITAPI void RGL_DrawPerformanceOverlay(void) {
     char buffer[128];
 
     // --- 4. Draw Background Panel ---
-    RGL_DrawSitRectangle((SitRectangle){(float)START_X, (float)START_Y, (float)PANEL_WIDTH, (float)PANEL_HEIGHT}, 0.0f, (Color){20, 20, 20, 200});
+    RGL_DrawRectangle((SitRectangle){(float)START_X, (float)START_Y, (float)PANEL_WIDTH, (float)PANEL_HEIGHT}, 0.0f, (Color){20, 20, 20, 200});
 
     // --- 5. Render Statistics Text ---
     int current_y = START_Y + PADDING;
@@ -8055,10 +8061,10 @@ SITAPI float RGL_Remap(float value, float input_start, float input_end, float ou
  * @param t The interpolation factor (0.0 to 1.0).
  * @return The interpolated vector.
  */
-SITAPI Vector2 RGL_Vector2Lerp(vec2 a, vec2 b, float t) {
+SITAPI Vector2 RGL_Vector2Lerp(Vector2 a, Vector2 b, float t) {
     Vector2 result;
-    result.raw[0] = RGL_Lerp(a[0], b[0], t);
-    result.raw[1] = RGL_Lerp(a[1], b[1], t);
+    result.x = RGL_Lerp(a.x, b.x, t);
+    result.y = RGL_Lerp(a.y, b.y, t);
     return result;
 }
 
@@ -8068,14 +8074,14 @@ SITAPI Vector2 RGL_Vector2Lerp(vec2 a, vec2 b, float t) {
  * @param angle_degrees The angle of rotation in degrees.
  * @return The rotated vector.
  */
-SITAPI Vector2 RGL_Vector2Rotate(vec2 v, float angle_degrees) {
+SITAPI Vector2 RGL_Vector2Rotate(Vector2 v, float angle_degrees) {
     Vector2 result;
     float angle_rads = angle_degrees * (GLM_PI / 180.0f);
     float cos_a = cosf(angle_rads);
     float sin_a = sinf(angle_rads);
 
-    result.raw[0] = v[0] * cos_a - v[1] * sin_a;
-    result.raw[1] = v[0] * sin_a + v[1] * cos_a;
+    result.x = v.x * cos_a - v.y * sin_a;
+    result.y = v.x * sin_a + v.y * cos_a;
 
     return result;
 }
@@ -8086,9 +8092,9 @@ SITAPI Vector2 RGL_Vector2Rotate(vec2 v, float angle_degrees) {
  * @return The angle in degrees, from -180 to 180.
  *         (Angle of {1,0} is 0 degrees).
  */
-SITAPI float RGL_Vector2Angle(vec2 v) {
+SITAPI float RGL_Vector2Angle(Vector2 v) {
     // atan2f handles all quadrants correctly and avoids division by zero
-    float angle_rads = atan2f(v[1], v[0]);
+    float angle_rads = atan2f(v.y, v.x);
     return angle_rads * (180.0f / GLM_PI);
 }
 
@@ -8377,7 +8383,7 @@ SITAPI RGLTexture RGL_StampTextToTexture(const char* text, RGLBitmapFont font, C
 
     // Clear with background color
     if (bg_color.a > 0) {
-        RGL_DrawSitRectangle((SitRectangle){0, 0, tex_width, tex_height}, 0.0f, bg_color);
+        RGL_DrawRectangle((SitRectangle){0, 0, tex_width, tex_height}, 0.0f, bg_color);
     }
 
     // Draw text
@@ -8426,7 +8432,7 @@ SITAPI RGLTexture RGL_StampTextToTextureAdvanced(const char* text, RGLTrueTypeFo
 
     // Clear background
     if (bg_color.a > 0) {
-        RGL_DrawSitRectangle((SitRectangle){0, 0, tex_width, tex_height}, 0.0f, bg_color);
+        RGL_DrawRectangle((SitRectangle){0, 0, tex_width, tex_height}, 0.0f, bg_color);
     }
 
     // Draw text with wrapping
@@ -9424,7 +9430,7 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
         C->bar_magenta, C->bar_red, C->bar_blue
     };
     for (int i = 0; i < 7; i++) {
-        RGL_DrawSitRectangle((SitRectangle){ content_area.x + i * bar_width, top_bars_y, bar_width, top_bars_height },
+        RGL_DrawRectangle((SitRectangle){ content_area.x + i * bar_width, top_bars_y, bar_width, top_bars_height },
                          0.0f, top_colors[i]);
     }
 
@@ -9436,7 +9442,7 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
         C->bar_black, C->bar_black, C->bar_mid_gray
     };
     for (int i = 0; i < 7; i++) {
-        RGL_DrawSitRectangle((SitRectangle){ content_area.x + i * bar_width, middle_bars_y, bar_width, middle_bars_height },
+        RGL_DrawRectangle((SitRectangle){ content_area.x + i * bar_width, middle_bars_y, bar_width, middle_bars_height },
                          0.0f, middle_colors[i]);
     }
 
@@ -9444,7 +9450,7 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
     float freq_bar_y = middle_bars_y + middle_bars_height;
     float freq_bar_height = content_area.height * 0.20f;
     // Background: White
-    RGL_DrawSitRectangle((SitRectangle){ content_area.x, freq_bar_y, content_area.width, freq_bar_height },
+    RGL_DrawRectangle((SitRectangle){ content_area.x, freq_bar_y, content_area.width, freq_bar_height },
                      0.0f, C->bar_white);
 
     // PLUGE bars (-4 IRE, 0 IRE, +4 IRE) on left and right
@@ -9458,10 +9464,10 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
     };
     for (int i = 0; i < 3; i++) {
         // Left PLUGE
-        RGL_DrawSitRectangle((SitRectangle){ start_x_left + i * pluge_width, freq_bar_y, pluge_width, freq_bar_height },
+        RGL_DrawRectangle((SitRectangle){ start_x_left + i * pluge_width, freq_bar_y, pluge_width, freq_bar_height },
                          0.0f, pluge_colors[i]);
         // Right PLUGE
-        RGL_DrawSitRectangle((SitRectangle){ start_x_right + i * pluge_width, freq_bar_y, pluge_width, freq_bar_height },
+        RGL_DrawRectangle((SitRectangle){ start_x_right + i * pluge_width, freq_bar_y, pluge_width, freq_bar_height },
                          0.0f, pluge_colors[i]);
     }
 
@@ -9475,19 +9481,19 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
         float x_offset = i * stripe_spacing;
         Color stripe_color = (i % 2 == 0) ? C->bar_black : C->bar_white;
         // Left burst
-        RGL_DrawSitRectangle((SitRectangle){ burst_start_x_left + x_offset, freq_bar_y, stripe_spacing * 0.5f, freq_bar_height },
+        RGL_DrawRectangle((SitRectangle){ burst_start_x_left + x_offset, freq_bar_y, stripe_spacing * 0.5f, freq_bar_height },
                          0.0f, stripe_color);
         // Right burst
-        RGL_DrawSitRectangle((SitRectangle){ burst_start_x_right + x_offset, freq_bar_y, stripe_spacing * 0.5f, freq_bar_height },
+        RGL_DrawRectangle((SitRectangle){ burst_start_x_right + x_offset, freq_bar_y, stripe_spacing * 0.5f, freq_bar_height },
                          0.0f, stripe_color);
     }
 
     // Gray and orange bars
-    RGL_DrawSitRectangle((SitRectangle){ content_area.x + bar_width * 3.0f, freq_bar_y, bar_width * 0.5f, freq_bar_height },
+    RGL_DrawRectangle((SitRectangle){ content_area.x + bar_width * 3.0f, freq_bar_y, bar_width * 0.5f, freq_bar_height },
                      0.0f, C->bar_dark_gray);
-    RGL_DrawSitRectangle((SitRectangle){ content_area.x + bar_width * 6.0f, freq_bar_y + freq_bar_height * 0.1f, bar_width * 0.8f, freq_bar_height * 0.8f },
+    RGL_DrawRectangle((SitRectangle){ content_area.x + bar_width * 6.0f, freq_bar_y + freq_bar_height * 0.1f, bar_width * 0.8f, freq_bar_height * 0.8f },
                      0.0f, C->bar_orange);
-    RGL_DrawSitRectangleOutline((SitRectangle){ content_area.x + bar_width * 6.0f, freq_bar_y + freq_bar_height * 0.1f, bar_width * 0.8f, freq_bar_height * 0.8f },
+    RGL_DrawRectangleOutline((SitRectangle){ content_area.x + bar_width * 6.0f, freq_bar_y + freq_bar_height * 0.1f, bar_width * 0.8f, freq_bar_height * 0.8f },
                             1.0f, C->bar_dark_gray);
 
     // Downward pointing triangle
@@ -9505,13 +9511,13 @@ static void _RGL_DrawSmpteBars(const RGLTestPatternConfig* config) {
     float bottom_bar_width = content_area.width * 0.715f; // Matches 5 bars
     SitRectangle top_grad_rect = { content_area.x, bottom_bar_y, bottom_bar_width, bottom_bar_height / 2.0f };
     SitRectangle bot_grad_rect = { content_area.x, bottom_bar_y + bottom_bar_height / 2.0f, bottom_bar_width, bottom_bar_height / 2.0f };
-    RGL_DrawSitRectangleGradient(top_grad_rect, C->bar_magenta, C->bar_black, C->bar_black, C->bar_black);
-    RGL_DrawSitRectangleGradient(bot_grad_rect, C->bar_black, C->bar_black, C->bar_blue, C->bar_black);
+    RGL_DrawRectangleGradient(top_grad_rect, C->bar_magenta, C->bar_black, C->bar_black, C->bar_black);
+    RGL_DrawRectangleGradient(bot_grad_rect, C->bar_black, C->bar_black, C->bar_blue, C->bar_black);
 
     // Final gray/black bars
-    RGL_DrawSitRectangle((SitRectangle){ content_area.x + bar_width * 5, bottom_bar_y, bar_width, bottom_bar_height },
+    RGL_DrawRectangle((SitRectangle){ content_area.x + bar_width * 5, bottom_bar_y, bar_width, bottom_bar_height },
                      0.0f, C->bar_dark_gray);
-    RGL_DrawSitRectangle((SitRectangle){ content_area.x + bar_width * 6, bottom_bar_y, bar_width, bottom_bar_height },
+    RGL_DrawRectangle((SitRectangle){ content_area.x + bar_width * 6, bottom_bar_y, bar_width, bottom_bar_height },
                      0.0f, C->bar_black);
 
     // --- Safe Area ---
@@ -9555,17 +9561,17 @@ static void _RGL_DrawPluge(const RGLTestPatternConfig* config) {
     };
     for (int i = 0; i < 4; i++) {
         // Left PLUGE bars
-        RGL_DrawSitRectangle((SitRectangle){ content_area.x + i * bar_width, bar_y, bar_width, bar_height },
+        RGL_DrawRectangle((SitRectangle){ content_area.x + i * bar_width, bar_y, bar_width, bar_height },
                          0.0f, pluge_colors[i]);
         // Right PLUGE bars (mirrored)
-        RGL_DrawSitRectangle((SitRectangle){ content_area.x + (9 - i) * bar_width, bar_y, bar_width, bar_height },
+        RGL_DrawRectangle((SitRectangle){ content_area.x + (9 - i) * bar_width, bar_y, bar_width, bar_height },
                          0.0f, pluge_colors[i]);
     }
 
     // --- Gray and White Bars (center) ---
     Color center_colors[] = { C->bar_mid_gray, C->bar_white, C->bar_dark_gray };
     for (int i = 0; i < 3; i++) {
-        RGL_DrawSitRectangle((SitRectangle){ content_area.x + (4 + i) * bar_width, bar_y, bar_width, bar_height },
+        RGL_DrawRectangle((SitRectangle){ content_area.x + (4 + i) * bar_width, bar_y, bar_width, bar_height },
                          0.0f, center_colors[i]);
     }
 
@@ -9602,7 +9608,7 @@ static void _RGL_DrawCrosshatch(const RGLTestPatternConfig* config) {
     SitRectangle screen_rect = { 0, 0, (float)width, (float)height };
 
     // Background
-    RGL_DrawSitRectangle(screen_rect, 0.0f, C->bg_dark_gray);
+    RGL_DrawRectangle(screen_rect, 0.0f, C->bg_dark_gray);
 
     // Crosshatch grid (e.g., 16x12 lines)
     int nx = 16, ny = 12;
@@ -9652,12 +9658,12 @@ static void _RGL_DrawMultiburst(const RGLTestPatternConfig* config) {
         for (int j = 0; j < num_stripes; j++) {
             float stripe_x = band_x + j * stripe_width * 2.0f;
             Color stripe_color = (j % 2 == 0) ? C->bar_white : C->bar_black;
-            RGL_DrawSitRectangle((SitRectangle){ stripe_x, bar_y, stripe_width, bar_height },
+            RGL_DrawRectangle((SitRectangle){ stripe_x, bar_y, stripe_width, bar_height },
                              0.0f, stripe_color);
         }
         // Fill remaining band with black if needed
         if (num_stripes * stripe_width * 2.0f < band_width) {
-            RGL_DrawSitRectangle((SitRectangle){ band_x + num_stripes * stripe_width * 2.0f, bar_y,
+            RGL_DrawRectangle((SitRectangle){ band_x + num_stripes * stripe_width * 2.0f, bar_y,
                                           band_width - num_stripes * stripe_width * 2.0f, bar_height },
                              0.0f, C->bar_black);
         }
@@ -9767,7 +9773,7 @@ SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config) {
 
     switch (config->type) {
         case RGL_TESTPATTERN_SMPTE_BARS: {
-            RGL_DrawSitRectangle(screen_rect, 0.0f, C->bg_dark_gray);
+            RGL_DrawRectangle(screen_rect, 0.0f, C->bg_dark_gray);
             float grid_spacing = (float)config->width / 32.0f;
             vec2 spacing; spacing[0] = grid_spacing; spacing[1] = grid_spacing;
             vec2 offset; offset[0] = 0; offset[1] = 0;
@@ -9786,7 +9792,7 @@ SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config) {
                     rect.y = y * config->checker_size[1];
                     rect.width = config->checker_size[0];
                     rect.height = config->checker_size[1];
-                    RGL_DrawSitRectangle(rect, 0.0f, c);
+                    RGL_DrawRectangle(rect, 0.0f, c);
                 }
             }
             if (RGL.debug.font.atlas_texture.texture.slot_index > 0) {
@@ -9813,10 +9819,10 @@ SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config) {
             SitRectangle r2 = { config->width / 2.0f, 0, config->width / 2.0f, config->height / 2.0f };
             SitRectangle r3 = { 0, config->height / 2.0f, config->width / 2.0f, config->height / 2.0f };
             SitRectangle r4 = { config->width / 2.0f, config->height / 2.0f, config->width / 2.0f, config->height / 2.0f };
-            RGL_DrawSitRectangleGradient(r1, C->bar_red, C->bar_green, C->bar_black, C->bar_black);
-            RGL_DrawSitRectangleGradient(r2, C->bar_cyan, C->bar_magenta, C->bar_black, C->bar_black);
-            RGL_DrawSitRectangleGradient(r3, C->bar_yellow, C->bar_blue, C->bar_black, C->bar_black);
-            RGL_DrawSitRectangleGradient(r4, C->bar_white, C->bar_mid_gray, C->bar_black, C->bar_black);
+            RGL_DrawRectangleGradient(r1, C->bar_red, C->bar_green, C->bar_black, C->bar_black);
+            RGL_DrawRectangleGradient(r2, C->bar_cyan, C->bar_magenta, C->bar_black, C->bar_black);
+            RGL_DrawRectangleGradient(r3, C->bar_yellow, C->bar_blue, C->bar_black, C->bar_black);
+            RGL_DrawRectangleGradient(r4, C->bar_white, C->bar_mid_gray, C->bar_black, C->bar_black);
             if (RGL.debug.font.atlas_texture.texture.slot_index > 0) {
                 vec2 pos; pos[0] = 10; pos[1] = 10;
                 RGL_DrawText("Gradient Test", pos, RGL.debug.font, C->bar_white);
@@ -9824,7 +9830,7 @@ SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config) {
         } break;
 
         case RGL_TESTPATTERN_GRID_ONLY: {
-            RGL_DrawSitRectangle(screen_rect, 0.0f, C->bg_dark_gray);
+            RGL_DrawRectangle(screen_rect, 0.0f, C->bg_dark_gray);
             float grid_spacing = (float)config->width / 32.0f;
             vec2 spacing; spacing[0] = grid_spacing; spacing[1] = grid_spacing;
             vec2 offset; offset[0] = 0; offset[1] = 0;
@@ -9836,11 +9842,11 @@ SITAPI void RGL_DrawTestPattern(const RGLTestPatternConfig* config) {
         } break;
 
         case RGL_TESTPATTERN_PLUGE: {
-            RGL_DrawSitRectangle(screen_rect, 0.0f, C->bg_dark_gray);
+            RGL_DrawRectangle(screen_rect, 0.0f, C->bg_dark_gray);
             _RGL_DrawPluge(config);
         } break;
         case RGL_TESTPATTERN_MULTIBURST: {
-            RGL_DrawSitRectangle(screen_rect, 0.0f, C->bg_dark_gray);
+            RGL_DrawRectangle(screen_rect, 0.0f, C->bg_dark_gray);
             _RGL_DrawMultiburst(config);
         } break;
         case RGL_TESTPATTERN_CROSSHATCH: {
@@ -9985,7 +9991,7 @@ static float g_camera_pitch_offset = 2.0f; // How high the camera looks above th
         RGL_DrawSprite(g_player_car_sprite, (vec2){screen_w/2.0f - 128, (float)screen_h - 256}, 0.0f, 1.0f, WHITE);
 
         // Draw a simple speedometer bar.
-        RGL_DrawSitRectangle((SitRectangle){20, (float)screen_h - 40, 200, 20}, 0.0f, BLUE);
+        RGL_DrawRectangle((SitRectangle){20, (float)screen_h - 40, 200, 20}, 0.0f, BLUE);
 
     RGL_End();
 }*/
